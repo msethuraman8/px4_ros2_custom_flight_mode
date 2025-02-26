@@ -183,7 +183,7 @@ public:
       case State::Diagonal: {
         const Eigen::Vector3f target_position_m = _start_position_m +
           Eigen::Vector3f{0.f, _width_m, 0.f};
-        _goto_setpoint->update(target_position_m, M_PI + M_PI / 3, _horizontal_speed_m_s);
+        _goto_setpoint->update(target_position_m, M_PI - M_PI / 3, _horizontal_speed_m_s);
         if (positionReached(target_position_m)) {
           _state = State::Done;
         }
@@ -240,14 +240,13 @@ private:
   }
 };
 
-
 // Create a class for custom flight mode executor. This implementation is almost identical
 // to one of the examples in the px4_ros2 package.
 class DrawModeExecutor : public px4_ros2::ModeExecutorBase
 {
 public:
   DrawModeExecutor(rclcpp::Node & node, px4_ros2::ModeBase & owned_mode)
-  : ModeExecutorBase(node, px4_ros2::ModeExecutorBase::Settings{}, owned_mode),
+  : ModeExecutorBase(node, {px4_ros2::ModeExecutorBase::Settings::Activation::ActivateImmediately}, owned_mode),
     _node(node)
   {
   }
@@ -255,6 +254,7 @@ public:
   enum class State
   {
     Reset,
+    Arming,
     TakingOff,
     DrawMode,
     RTL,
@@ -263,7 +263,7 @@ public:
 
   void onActivate() override
   {
-    runState(State::TakingOff, px4_ros2::Result::Success);
+    runState(State::Arming, px4_ros2::Result::Success);
   }
 
   void onDeactivate(DeactivateReason reason) override
@@ -283,6 +283,10 @@ public:
 
     switch (state) {
       case State::Reset:
+        break;
+
+      case State::Arming:
+        arm([this](px4_ros2::Result result) {runState(State::TakingOff, result);});
         break;
 
       case State::TakingOff:
