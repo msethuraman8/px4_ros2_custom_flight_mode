@@ -19,7 +19,7 @@ This is a ROS 2 component that can be used to add a custom flight mode to a PX4 
     # Clone components
     git clone --branch release/1.15 https://github.com/PX4/px4_msgs.git
     git clone --recursive https://github.com/Auterion/px4-ros2-interface-lib.git
-    git clone http://github.com/godfreynolan/px4_ros2_custom_flight_mode.git
+    git clone https://github.com/godfreynolan/px4_ros2_custom_flight_mode.git
 
     # Build the workspace and setup the shell to run ros commands later
     cd ..
