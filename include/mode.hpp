@@ -6,7 +6,7 @@
 
 #include <px4_ros2/components/mode.hpp>
 #include <px4_ros2/components/mode_executor.hpp>
-#include <px4_ros2/control/setpoint_types/goto.hpp>
+#include <px4_ros2/control/setpoint_types/multicopter/goto.hpp>
 #include <px4_ros2/control/setpoint_types/experimental/trajectory.hpp>
 #include <px4_ros2/odometry/local_position.hpp>
 
@@ -29,14 +29,14 @@ class DrawFlightMode : public px4_ros2::ModeBase
 {
 public:
   explicit DrawFlightMode(rclcpp::Node & node)
-  : ModeBase(node, Settings{kName}),
+  : ModeBase(node, kName),
     _node{node}
   {
     // We'll be using trajectory and goto setpoints to control the movement of 
     // the drone.
     // Goto setpoints allow you to set a target position for the drone to move 
     // to, along with option heading and max speed values.
-    _goto_setpoint = std::make_shared<px4_ros2::GotoSetpointType>(*this);
+    _goto_setpoint = std::make_shared<px4_ros2::MulticopterGotoSetpointType>(*this);
     // Trajectory setpoints allow you to set position, velocity, acceleration, 
     // yaw, and yaw rate targets. 
     _trajectory_setpoint = std::make_shared<px4_ros2::TrajectorySetpointType>(*this);
@@ -201,7 +201,7 @@ private:
   rclcpp::Node & _node;
 
   std::shared_ptr<px4_ros2::TrajectorySetpointType> _trajectory_setpoint;
-  std::shared_ptr<px4_ros2::GotoSetpointType> _goto_setpoint;
+  std::shared_ptr<px4_ros2::MulticopterGotoSetpointType> _goto_setpoint;
   std::shared_ptr<px4_ros2::OdometryLocalPosition> _vehicle_local_position;
 
   rclcpp::Publisher<px4_msgs::msg::TrajectorySetpoint>::SharedPtr _trajectory_setpoint_pub;
@@ -245,9 +245,9 @@ private:
 class DrawModeExecutor : public px4_ros2::ModeExecutorBase
 {
 public:
-  DrawModeExecutor(rclcpp::Node & node, px4_ros2::ModeBase & owned_mode)
-  : ModeExecutorBase(node, {px4_ros2::ModeExecutorBase::Settings::Activation::ActivateImmediately}, owned_mode),
-    _node(node)
+  explicit DrawModeExecutor(px4_ros2::ModeBase & owned_mode)
+  : ModeExecutorBase({px4_ros2::ModeExecutorBase::Settings::Activation::ActivateImmediately}, owned_mode),
+    _node(owned_mode.node())
   {
   }
 
