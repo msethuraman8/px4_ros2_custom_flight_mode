@@ -36,7 +36,7 @@ public:
     // the drone.
     // Goto setpoints allow you to set a target position for the drone to move 
     // to, along with option heading and max speed values.
-    _goto_setpoint = std::make_shared<px4_ros2::GotoSetpointType>(*this);
+    _goto_setpoint = std::make_shared<px4_ros2::MulticopterGotoSetpointType>(*this);
     // Trajectory setpoints allow you to set position, velocity, acceleration, 
     // yaw, and yaw rate targets. 
     _trajectory_setpoint = std::make_shared<px4_ros2::TrajectorySetpointType>(*this);
@@ -201,7 +201,7 @@ private:
   rclcpp::Node & _node;
 
   std::shared_ptr<px4_ros2::TrajectorySetpointType> _trajectory_setpoint;
-  std::shared_ptr<px4_ros2::GotoSetpointType> _goto_setpoint;
+  std::shared_ptr<px4_ros2::MulticopterGotoSetpointType> _goto_setpoint;
   std::shared_ptr<px4_ros2::OdometryLocalPosition> _vehicle_local_position;
 
   rclcpp::Publisher<px4_msgs::msg::TrajectorySetpoint>::SharedPtr _trajectory_setpoint_pub;
