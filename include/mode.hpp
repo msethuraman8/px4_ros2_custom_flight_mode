@@ -247,7 +247,7 @@ class DrawModeExecutor : public px4_ros2::ModeExecutorBase
 public:
   DrawModeExecutor(px4_ros2::ModeBase & owned_mode)
   : ModeExecutorBase({px4_ros2::ModeExecutorBase::Settings::Activation::ActivateImmediately}, owned_mode),
-    _node(node)
+    _node(owned_mode.node())
   {
   }
 
